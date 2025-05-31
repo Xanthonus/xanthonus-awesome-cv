@@ -1,5 +1,7 @@
 # Xanthonus Awesome-CV
 
+Ill try to keep this up to date.
+
 ## Credit
 
 [**LaTeX**](https://www.latex-project.org) is a fantastic typesetting program that a lot of people use these days, especially the math and computer science people in academia.
