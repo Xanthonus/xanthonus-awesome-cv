@@ -2,6 +2,12 @@
 
 Ill try to keep this up to date.
 
+## How to Build Locally
+
+```bash
+docker run --rm --user $(id -u):$(id -g) -i -w "/doc" -v "$PWD":/doc texlive/texlive:latest make
+```
+
 ## Credit
 
 [**LaTeX**](https://www.latex-project.org) is a fantastic typesetting program that a lot of people use these days, especially the math and computer science people in academia.
