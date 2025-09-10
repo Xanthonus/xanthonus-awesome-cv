@@ -1,22 +1,53 @@
-name: Compile PDFs
-
+name: Compile and Release Resume
 on:
-  push: {}
+  push:
+    branches: [main]
   pull_request: {}
-
 jobs:
   build:
     runs-on: ubuntu-latest
     container: texlive/texlive:latest
-
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Compile
+      - name: Compile LaTeX
         run: make
 
-      - uses: actions/upload-artifact@v4
+      - name: Get current date
+        id: date
+        run: echo "date=$(date +'%Y%m%d')" >> $GITHUB_OUTPUT
+
+      - name: Create compiled directory and copy PDF
+        run: |
+          mkdir -p xan-documents/compiled
+          cp xan-documents/resume.pdf xan-documents/compiled/kww_resume_${{ steps.date.outputs.date }}.pdf
+
+      - name: Commit updated resume (main branch only)
+        if: github.ref == 'refs/heads/main'
+        run: |
+          git config --global user.name 'GitHub Actions'
+          git config --global user.email 'actions@github.com'
+          git add xan-documents/compiled/kww_resume_${{ steps.date.outputs.date }}.pdf
+          git diff --staged --quiet || git commit -m "Update resume PDF - ${{ steps.date.outputs.date }} [skip ci]"
+          git push
+
+      - name: Create Release (main branch only)
+        if: github.ref == 'refs/heads/main'
+        uses: softprops/action-gh-release@v1
         with:
-          name: resume
-          path: xan-documents/*.pdf
+          tag_name: resume-${{ steps.date.outputs.date }}
+          name: Resume ${{ steps.date.outputs.date }}
+          body: |
+            Automatically generated resume PDF
+            Generated on: ${{ steps.date.outputs.date }}
+          files: xan-documents/compiled/kww_resume_${{ steps.date.outputs.date }}.pdf
+
+      - name: Upload artifact (for PRs)
+        if: github.event_name == 'pull_request'
+        uses: actions/upload-artifact@v4
+        with:
+          name: resume-preview
+          path: xan-documents/compiled/kww_resume_${{ steps.date.outputs.date }}.pdf
