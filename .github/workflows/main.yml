@@ -1,7 +1,7 @@
 name: Compile and Release Resume
 on:
   push:
-    branches: [main]
+    branches: [xan-resume]
   pull_request: {}
 jobs:
   build:
