@@ -25,8 +25,8 @@ jobs:
           mkdir -p xan-documents/compiled
           cp xan-documents/resume.pdf xan-documents/compiled/kww_resume_${{ steps.date.outputs.date }}.pdf
 
-      - name: Commit updated resume (main branch only)
-        if: github.ref == 'refs/heads/main'
+      - name: Commit updated resume (xan-resume branch only)
+        if: github.ref == 'refs/heads/xan-resume'
         run: |
           git config --global user.name 'GitHub Actions'
           git config --global user.email 'actions@github.com'
@@ -34,8 +34,8 @@ jobs:
           git diff --staged --quiet || git commit -m "Update resume PDF - ${{ steps.date.outputs.date }} [skip ci]"
           git push
 
-      - name: Create Release (main branch only)
-        if: github.ref == 'refs/heads/main'
+      - name: Create Release (xan-resume branch only)
+        if: github.ref == 'refs/heads/xan-resume'
         uses: softprops/action-gh-release@v1
         with:
           tag_name: resume-${{ steps.date.outputs.date }}
